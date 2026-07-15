@@ -16,10 +16,11 @@ import inspect
 LEVELS = [2, 3, 4, 5, 6, 7, 8]
 FIX_ANTIMERIDIAN = "split"
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-ROOT = os.path.dirname(HERE)
-POINTS_JSON = os.path.join(ROOT, "flood_points.json")
-OUTPUT = os.path.join(HERE, "data.geojson")
+HERE = os.path.dirname(os.path.abspath(__file__))            # Software/Back_End
+DATA_ROOT = os.path.dirname(os.path.dirname(HERE))           # FEWS_Share (data files)
+FRONT_END = os.path.join(os.path.dirname(HERE), "Front_End")  # Software/Front_End
+POINTS_JSON = os.path.join(DATA_ROOT, "flood_points.json")
+OUTPUT = os.path.join(FRONT_END, "data.geojson")
 
 SEVERITY_RANK = {
     "none": 0, "minor": 1, "moderate": 2, "major": 3, "severe": 4, "extreme": 5,

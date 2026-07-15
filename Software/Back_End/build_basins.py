@@ -18,11 +18,12 @@ import json
 import os
 import sys
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-ROOT = os.path.dirname(HERE)
-FLOOD_JSON = os.path.join(ROOT, "flood_state.json")
-PARQUET = os.path.join(ROOT, "HUC12.parquet")
-OUTPUT = os.path.join(HERE, "data.geojson")
+HERE = os.path.dirname(os.path.abspath(__file__))            # Software/Back_End
+DATA_ROOT = os.path.dirname(os.path.dirname(HERE))           # FEWS_Share (data files)
+FRONT_END = os.path.join(os.path.dirname(HERE), "Front_End")  # Software/Front_End
+FLOOD_JSON = os.path.join(DATA_ROOT, "flood_state.json")
+PARQUET = os.path.join(DATA_ROOT, "HUC12.parquet")
+OUTPUT = os.path.join(FRONT_END, "data.geojson")
 BASIN_LEVEL = 12
 
 SEVERITY_RANK = {

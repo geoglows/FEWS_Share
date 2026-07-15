@@ -15,10 +15,11 @@ import inspect
 RESOLUTIONS = [3, 4, 5, 6]
 FIX_ANTIMERIDIAN = "split"
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-ROOT = os.path.dirname(HERE)
-POINTS_JSON = os.path.join(ROOT, "flood_points.json")
-OUTPUT = os.path.join(HERE, "data.geojson")
+HERE = os.path.dirname(os.path.abspath(__file__))       
+DATA_ROOT = os.path.dirname(os.path.dirname(HERE))         
+FRONT_END = os.path.join(os.path.dirname(HERE), "Front_End")
+POINTS_JSON = os.path.join(DATA_ROOT, "flood_points.json")
+OUTPUT = os.path.join(FRONT_END, "data.geojson")
 
 SEVERITY_RANK = {
     "none": 0, "minor": 1, "moderate": 2, "major": 3, "severe": 4, "extreme": 5,

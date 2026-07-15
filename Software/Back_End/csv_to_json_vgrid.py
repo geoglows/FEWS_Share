@@ -13,8 +13,8 @@ import json
 import os
 import sys
 
-INPUT_CSVS = ["../Flood_Hub_Global.csv", "../Geoglows_2024-04-01-00.csv"]
-OUTPUT = "../flood_points.json"
+INPUT_CSVS = ["../../Flood_Hub_Global.csv", "../../Geoglows_2024-04-01-00.csv"]
+OUTPUT = "../../flood_points.json"
 
 FLOOD_HUB_SEVERITY = {
     "UNKNOWN": "none",

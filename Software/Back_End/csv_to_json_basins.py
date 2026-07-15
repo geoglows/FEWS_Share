@@ -13,8 +13,8 @@ import json
 import os
 import sys
 
-INPUT_CSVS = ["../sample_geoglows.csv", "../Flood_Hub_Global.csv"]
-OUTPUT = "../flood_state.json"
+INPUT_CSVS = ["../../sample_geoglows.csv", "../../Flood_Hub_Global.csv"]
+OUTPUT = "../../flood_state.json"
 SPLIT = False
 
 REQUIRED_COLUMNS = [

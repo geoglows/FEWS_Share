@@ -1,34 +1,75 @@
-# Flood Forecast Viewer
+# FEWS Share
 
-A map that flags flood-forecast locations and shows each model's forecast on click.
-Open it through a local server (VS Code **Go Live**) — double-clicking `index.html`
-shows an empty map because browsers block file loading on `file://`.
+A web map that flags flood-forecast locations (H3 grid cells or HydroBASINS basins)
+and shows each model's forecast on click. Data comes from GEOGLOWS and Google Flood Hub.
+
+## Stack
+
+Built with **Vite** — it bundles the app, serves it with hot reload during
+development, and produces the static `dist/` build. Dependencies come from npm
+(Leaflet, Iconify, Tailwind CSS v4 via `@tailwindcss/vite`), so there are no CDN
+`<script>` tags. Vite also replaces VS Code Go Live — `npm run dev` is the dev server.
+
+## Run the app
+
+```
+npm install
+npm run dev        # dev server at http://localhost:5173
+npm run build      # static build -> dist/
+npm run preview    # preview the built site
+```
 
 ## Layout
-- `Front_End/` — the web app: `index.html`, `app.js`, `styles.css`, logo. It reads
-  a `data.geojson` sitting next to `index.html`.
-- `Back_End/` — the Python pipeline that generates `data.geojson`.
 
-## Run it (grid view)
+- `index.html` — page shell, loads `/src/main.js`
+- `src/main.js` — map, panel, legend, data loading
+- `src/style.css` — Tailwind + theme + Leaflet overrides
+- `public/` — static assets copied as-is (favicon, logo)
+- `scripts/` — the Python pipeline that builds the GeoJSON
+- `Files/` — input CSVs, basin parquets, impact stats (gitignored)
+
+## Data
+
+The map fetches its GeoJSON from CloudFront:
+
 ```
-cd Back_End
+https://d3hbj0z0f67zhd.cloudfront.net/fews4all/data_basins.geojson
+```
+
+Regenerate it with the pipeline below, then upload the result.
+
+### Grid (H3) pipeline
+
+```
+cd scripts
 python csv_to_json_vgrid.py     # model CSVs -> flood_points.json
 python build_cells_h3.py        # points     -> data.geojson
 ```
-Then open `Front_End/index.html` via Go Live.
 
-## Run it (basin view)
-```
-cd Back_End
-python csv_to_json_basins.py    # model CSVs        -> flood_state.json
-python build_basins.py          # + HUC.parquet     -> data.geojson
-```
-Both views write the same `data.geojson`, so whichever build you run last is what
-the map shows.
+`build_cells_s2.py` is a drop-in alternative producing S2 cells instead of hexagons.
 
-## Back_End files
-- `csv_to_json_vgrid.py` — merges Flood Hub + GEOGLOWS into `flood_points.json`
-  (severity mapping and mean-flow floor are configured at the top of the file).
-- `build_cells_h3.py` — bins points into H3 hexagons (`RESOLUTIONS` knob at top).
-- `build_cells_s2.py` — S2 four-sided cells (same `data.geojson` format).
-- `csv_to_json_basins.py` / `build_basins.py` — the HydroBASINS basin pipeline.
+### Basin (HydroBASINS) pipeline
+
+```
+cd scripts
+python csv_to_json_basins.py    # model CSVs           -> flood_state.json
+python build_basins.py          # + HUC0{4..8}.parquet -> data.geojson
+```
+
+Basins telescope from level 4 (coarse) to level 8 (fine); GEOGLOWS rivers join via
+`global_matches.csv`, Flood Hub gauges by point-in-polygon.
+
+Both pipelines write the same `data.geojson` format, so whichever you run last is
+what gets uploaded.
+
+## Severity
+
+Four tiers — none / warning / danger / extreme. Flood Hub uses its own labels;
+GEOGLOWS is derived from return period (>=20yr extreme, >=5yr danger, >=2yr warning).
+Thresholds and the mean-flow floor are set at the top of `csv_to_json_vgrid.py`.
+
+## Known issues
+
+- `package.json` has `"build": "build"` — should be `"vite build"`.
+- The `scripts/*.py` output paths still point at the old `Front_End/` folder, which
+  no longer exists. Update `OUTPUT` before running them.

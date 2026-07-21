@@ -22,3 +22,14 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+__pycache__/
+Files/
+Flood_Hub_Downloader/
+pfafsetter/
+Screenshots/
+vgrid/
+Software/
+Other/
+.gitignore
+flood_points.json
+flood_state.json

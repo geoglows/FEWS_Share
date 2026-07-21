@@ -8,12 +8,13 @@ gauges are placed by point-in-polygon. Level-8 results are then rolled up to
 levels 7..4 using the PFAF_ID hierarchy (a level-N basin's code is the first N
 digits of its level-8 descendants').
 
-Reads:  ../../Files/global_matches.csv     Basin_ID -> Best_Match (GEOGLOWS comid)
-        ../../Files/Geoglows_*.csv         comid, ret_per, mean
-        ../../Files/Flood_Hub_Global.csv   gauge severity + lat/lon
-        ../../Files/Basins/HUC0{4..8}.parquet   basin polygons (HYBAS_ID, PFAF_ID)
-Writes: ../Front_End/data.geojson          one FeatureCollection, features tagged
-                                           with `res` (the basin level)
+Reads:  ../Files/global_matches.csv      Basin_ID -> Best_Match (GEOGLOWS comid)
+        ../Files/Geoglows_*.csv          comid, ret_per, mean
+        ../Files/Flood_Hub_Global.csv    gauge severity + lat/lon
+        ../Files/Basins/HUC0{4..8}.parquet   basin polygons (HYBAS_ID, PFAF_ID)
+Writes: ../data.geojson                  one FeatureCollection, features tagged
+                                         with `res` (the basin level); upload this
+                                         to CloudFront for the app to consume
 """
 
 import csv
@@ -21,10 +22,9 @@ import json
 import os
 import sys
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-DATA_ROOT = os.path.dirname(os.path.dirname(HERE))
-FRONT_END = os.path.join(os.path.dirname(HERE), "Front_End")
-FILES = os.path.join(DATA_ROOT, "Files")
+HERE = os.path.dirname(os.path.abspath(__file__))   # <repo>/scripts
+ROOT = os.path.dirname(HERE)                        # <repo>
+FILES = os.path.join(ROOT, "Files")
 
 MATCHES_CSV = os.path.join(FILES, "global_matches.csv")
 GEOGLOWS_CSV = os.path.join(FILES, "Geoglows_2026-07-13-00.csv")
@@ -32,7 +32,7 @@ FLOOD_HUB_CSV = os.path.join(FILES, "Flood_Hub_Global.csv")
 BASINS_DIR = os.path.join(FILES, "Basins")
 IMPACT_DIR = os.path.join(FILES, "Impact")
 HUC12_PARQUET = os.path.join(BASINS_DIR, "HUC12.parquet")
-OUTPUT = os.path.join(FRONT_END, "data.geojson")
+OUTPUT = os.path.join(ROOT, "data_basins.geojson")
 
 # Impact stats are measured per HUC12 basin; each file is HYBAS_ID + value
 # column(s), with a TOTAL row we skip. (file, {csv column: impact field})

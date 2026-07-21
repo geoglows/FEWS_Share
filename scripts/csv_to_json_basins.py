@@ -13,8 +13,9 @@ import json
 import os
 import sys
 
-INPUT_CSVS = ["../../sample_geoglows.csv", "../../Flood_Hub_Global.csv"]
-OUTPUT = "../../flood_state.json"
+# Paths are relative to this file (<repo>/scripts), so ../Files is <repo>/Files.
+INPUT_CSVS = ["../Files/sample_geoglows.csv", "../Files/Flood_Hub_Global.csv"]
+OUTPUT = "../flood_state.json"
 SPLIT = False
 
 REQUIRED_COLUMNS = [

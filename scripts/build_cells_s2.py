@@ -3,7 +3,7 @@
 build_cells_s2.py — bin flood points into S2 cells at several levels.
 
 Reads:  ../flood_points.json   per-point forecasts with lat/lon
-Writes: data.geojson           one GeoJSON FeatureCollection; each feature tagged
+Writes: ../data.geojson        one GeoJSON FeatureCollection; each feature tagged
                                with `res` (the S2 level), plus a top-level
                                `resolutions` member
 """
@@ -16,11 +16,10 @@ import inspect
 LEVELS = [2, 3, 4, 5, 6, 7, 8]
 FIX_ANTIMERIDIAN = "split"
 
-HERE = os.path.dirname(os.path.abspath(__file__))            # Software/Back_End
-DATA_ROOT = os.path.dirname(os.path.dirname(HERE))           # FEWS_Share (data files)
-FRONT_END = os.path.join(os.path.dirname(HERE), "Front_End")  # Software/Front_End
-POINTS_JSON = os.path.join(DATA_ROOT, "flood_points.json")
-OUTPUT = os.path.join(FRONT_END, "data.geojson")
+HERE = os.path.dirname(os.path.abspath(__file__))   # <repo>/scripts
+ROOT = os.path.dirname(HERE)                        # <repo>
+POINTS_JSON = os.path.join(ROOT, "flood_points.json")
+OUTPUT = os.path.join(ROOT, "data_s2cells.geojson")
 
 SEVERITY_RANK = {
     "none": 0, "warning": 1, "danger": 2, "extreme": 3,

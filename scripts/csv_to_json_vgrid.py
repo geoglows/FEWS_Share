@@ -13,8 +13,9 @@ import json
 import os
 import sys
 
-INPUT_CSVS = ["../../Flood_Hub_Global.csv", "../../Geoglows_2026-07-13-00.csv"]
-OUTPUT = "../../flood_points.json"
+# Paths are relative to this file (<repo>/scripts), so ../Files is <repo>/Files.
+INPUT_CSVS = ["../Files/Flood_Hub_Global.csv", "../Files/Geoglows_2026-07-13-00.csv"]
+OUTPUT = "../flood_points.json"
 
 # Flood Hub interpretation: three tiers by return period.
 FLOOD_HUB_SEVERITY = {

@@ -66,9 +66,3 @@ what gets uploaded.
 Four tiers — none / warning / danger / extreme. Flood Hub uses its own labels;
 GEOGLOWS is derived from return period (>=20yr extreme, >=5yr danger, >=2yr warning).
 Thresholds and the mean-flow floor are set at the top of `csv_to_json_vgrid.py`.
-
-## Known issues
-
-- `package.json` has `"build": "build"` — should be `"vite build"`.
-- The `scripts/*.py` output paths still point at the old `Front_End/` folder, which
-  no longer exists. Update `OUTPUT` before running them.

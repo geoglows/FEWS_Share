@@ -104,7 +104,20 @@ import L from "leaflet";
     return String(val);
   }
 
-  const map = L.map("map", {zoomControl: true, minZoom: 2, maxZoom: 20});
+  // A single copy of the world. The data only exists once, so we clamp panning to
+  // one world width; without this Leaflet lets you scroll into empty repeated
+  // tiles where no cells/basins are drawn. `worldCopyJump:false` keeps us from
+  // teleporting across copies; the tile layers get `noWrap:true` below so the
+  // basemap doesn't repeat either.
+  const WORLD_BOUNDS = L.latLngBounds([-85, -180], [85, 180]);
+  const map = L.map("map", {
+    zoomControl: true,
+    minZoom: 2,
+    maxZoom: 20,
+    worldCopyJump: false,
+    maxBounds: WORLD_BOUNDS,
+    maxBoundsViscosity: 1.0,
+  });
   map.setView([20, 0], 2);
 
   // Tile layers carry only their own imagery credit. The grid/basin credit is a
@@ -115,14 +128,14 @@ import L from "leaflet";
 
   const baseLayers = {
     "Google Hybrid": L.tileLayer("https://{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}", {
-      subdomains: googleSub, maxZoom: 20, attribution: googleAttr,
+      subdomains: googleSub, maxZoom: 20, attribution: googleAttr, noWrap: true, bounds: WORLD_BOUNDS,
     }),
     "Google Satellite": L.tileLayer("https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}", {
-      subdomains: googleSub, maxZoom: 20, attribution: googleAttr,
+      subdomains: googleSub, maxZoom: 20, attribution: googleAttr, noWrap: true, bounds: WORLD_BOUNDS,
     }),
     "OpenStreetMap": L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       maxZoom: 19,
-      attribution: "&copy; OpenStreetMap contributors",
+      attribution: "&copy; OpenStreetMap contributors · Grid: H3",
     }),
   };
 
@@ -200,7 +213,7 @@ import L from "leaflet";
           <div class="flex items-center justify-between mb-2">
             <span class="flex items-center gap-1.5 font-semibold text-[13px] capitalize text-slate-100">
               <iconify-icon icon="heroicons:chart-bar" class="text-sky-300"></iconify-icon>
-              ${(fc.model || "model").replace(/_/g, " ")}
+              ${modelLabel(fc.model || "model")}
             </span>
           </div>
           <dl class="grid grid-cols-[128px_1fr] gap-x-2.5 gap-y-1 text-[12.5px]">${rows}</dl>
@@ -300,13 +313,16 @@ import L from "leaflet";
     // Colour = severity; outline = model agreement. Multi-model cells get a bold
     // dark ring + more opaque fill so higher-confidence areas stand out.
     if (p.agree) {
-      return {color: "#0f172a", weight: 2.5, opacity: 1, fillColor: c, fillOpacity: 0.6};
+      return {color: "#0f172a", weight: 2.5, opacity: 1, fillColor: c, fillOpacity: 0.3};
     }
-    return {color: c, weight: 1, opacity: 0.85, fillColor: c, fillOpacity: 0.32};
+    return {color: c, weight: 1, opacity: 0.85, fillColor: c, fillOpacity: 0.3};
   }
 
   const HOVER_STYLE = {weight: 3, fillOpacity: 0.6};
-  const SELECT_STYLE = {weight: 4, fillOpacity: 0.6, color: "#ffffff"};
+  // Selection reads as "solid": the white ring plus a near-opaque fill lifts the
+  // clicked basin off the basemap. This matters most for multi-model basins,
+  // whose resting fill is already 0.6 — without a bump, clicking barely changed them.
+  const SELECT_STYLE = {weight: 4, fillOpacity: 0.2, color: "#ffffff"};
 
   let selected = null;
   let selectedGroup = null;
